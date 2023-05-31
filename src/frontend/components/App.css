@@ -1,0 +1,300 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Raleway", sans-serif;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+nav {
+  background-image: linear-gradient(to right, #00ffa2, #00f7ff);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-top: 45px;
+}
+
+.navLink {
+  list-style-type: none;
+  display: inline-block;
+  padding: 25px;
+  align-items: center;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: capitalize;
+  align-items: center;
+}
+
+.navLink:hover {
+  color: aqua;
+  transition: 1s;
+}
+
+.headline {
+  color: #101010;
+  text-decoration: none;
+  font-size: 30px;
+  font-weight: bold;
+  text-transform: capitalize;
+  align-items: center;
+  padding-right: 30px;
+  padding-top: 18px;
+}
+.hero {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  background-color: cadetblue;
+}
+
+.buy-nft {
+  background-color: black;
+  color: hsl(180, 100%, 50%);
+  text-decoration: none;
+  border: 2px solid transparent;
+  font-size: 18px;
+  padding: 13px 20px;
+  padding-top: 10px;
+  border-radius: 10px;
+  transition: 1s;
+}
+
+.buy-nft:hover {
+  color: black;
+  background-color: aqua;
+  cursor: pointer;
+  border-color: transparent;
+}
+.create-nft {
+  background-color: black;
+  color: hsl(180, 100%, 50%);
+  text-decoration: none;
+  border: 2px solid transparent;
+  font-size: 18px;
+  padding: 13px 30px;
+  padding-top: 10px;
+  border-radius: 30px;
+  transition: 1s;
+  width: 75%;
+  justify-content: center;
+  align-items: center;
+}
+.create-nft:hover {
+  color: black;
+  background-color: aqua;
+  cursor: pointer;
+  border-color: transparent;
+}
+
+.connect-btn {
+  color: black;
+  background-color: transparent;
+  cursor: pointer;
+  border-color: 0.5px black;
+  font-size: 15px;
+  padding: 8px 20px;
+  border-radius: 10px;
+  transition: 1s;
+}
+
+.connect-btn:hover {
+  background-color: black;
+  color: hsl(180, 100%, 50%);
+  text-decoration: none;
+  border: 0.5px solid transparent;
+  font-size: 15px;
+  padding: 8px 20px;
+  border-radius: 10px;
+  transition: 1s;
+}
+.form {
+  background-color: transparent;
+  display: inline-block;
+  width: 75%;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid aqua;
+  outline: none;
+  border-radius: 30px;
+}
+
+.g-4.rowform {
+  justify-content: center;
+  align-items: center;
+}
+
+.d-grid.px-0 {
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+}
+
+div.card {
+  border-radius: 10px;
+  border: transparent 0px;
+  transition: 1s;
+  box-shadow: 10px 10px 30px lightgray;
+}
+
+div.card:hover {
+  transform: translateY(-10px);
+}
+
+img.card-img-top {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+a.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: capitalize;
+  align-items: center;
+}
+a.nav-link:hover {
+  color: aqua;
+  transition: 1s;
+}
+div.me-auto.navbar.nav {
+  color: white;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: capitalize;
+  align-items: center;
+  display: inline-block;
+}
+
+div.card-body {
+  justify-content: center;
+  align-items: center;
+  height: 130px;
+}
+
+.cardNft1 {
+  height: 360px;
+  width: 335px;
+  padding: 20px 35px 0px 35px;
+  background-color: #7bff98;
+  border-radius: 20px;
+  margin: 15px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.6s;
+}
+
+.cardNft2 {
+  height: 360px;
+  width: 335px;
+  padding: 20px 35px 0px 35px;
+  background-color: #7bff98;
+  border-radius: 20px;
+  margin: 15px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.6s;
+}
+
+.cardNft3 {
+  height: 360px;
+  width: 335px;
+  padding: 20px 35px 0px 35px;
+  background-color: #7bff98;
+  border-radius: 20px;
+  margin: 15px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.6s;
+}
+
+.cardNft4 {
+  height: 360px;
+  width: 335px;
+  padding: 20px 35px 0px 35px;
+  background-color: #7bff98;
+  border-radius: 20px;
+  margin: 15px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.6s;
+}
+
+.cardNft5 {
+  height: 360px;
+  width: 335px;
+  padding: 20px 35px 0px 35px;
+  background-color: #7bff98;
+  border-radius: 20px;
+  margin: 15px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.6s;
+}
+
+h5 {
+  color: #101010;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: capitalize;
+  align-items: center;
+  padding-right: 30px;
+  padding-top: 18px;
+}
+
