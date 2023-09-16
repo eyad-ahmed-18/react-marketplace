@@ -1,98 +1,130 @@
-import React, { useEffect, useState } from "react";
-import { Container, Card, Row, Col, Button } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { ethers } from "ethers";
+import { Row, Col, Card, Button, Spinner } from "react-bootstrap";
 
-const CollectionPage = ({ collectionName, marketplace, nft }) => {
-  const [nfts, setNfts] = useState([]);
+const CollectionPage = ({ marketplace, nft }) => {
+  const { collectionName } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState([]);
 
-  useEffect(() => {
-    const fetchNFTs = async () => {
-        const itemCount = await marketplace.itemCount();
-        const nftList = [];
-      
-        for (let i = 1; i <= itemCount; i++) {
-          const item = await marketplace.items(i);
-          const uri = await nft.tokenURI(item.tokenId);
-          const response = await fetch(uri);
-          const metadata = await response.json();
-      
-          if (metadata.collectionName === collectionName) {
-            const totalPrice = ethers.utils.formatEther(
-              ethers.BigNumber.from(item.price).add(item.fee)
-            );
-      
-            const nftItem = {
-              itemId: item.itemId,
-              tokenId: item.tokenId,
-              price: item.price,
-              seller: item.seller,
-              sold: item.sold,
-              metadata: metadata,
-              totalPrice: totalPrice,
-            };
-      
-            nftList.push(nftItem);
-          }
+  const loadCollectionItems = async (collectionName) => {
+    // Load items from the specified collection
+    const itemCount = await marketplace.itemCount();
+    let collectionItems = [];
+    for (let i = 1; i <= itemCount; i++) {
+      const item = await marketplace.items(i);
+      if (!item.sold) {
+        // get uri url from nft contract
+        const uri = await nft.tokenURI(item.tokenId);
+        // use uri to fetch the nft metadata stored on ipfs
+        const response = await fetch(uri);
+        const metadata = await response.json();
+        if (metadata.collectionName === collectionName) {
+          // get total price of item (item price + fee)
+          const totalPrice = await marketplace.getTotalPrice(item.itemId);
+          // Add item to collectionItems array
+          collectionItems.push({
+            totalPrice,
+            collectionName: metadata.collectionName,
+            itemId: item.itemId,
+            seller: item.seller,
+            name: metadata.name,
+            description: metadata.description,
+            image: metadata.image,
+          });
         }
-      
-        setNfts(nftList);
-      };
-
-    fetchNFTs();
-  }, [collectionName, marketplace, nft]);
-
-  const buyMarketItem = async (itemId, price) => {
-    try {
-      const transaction = await marketplace.buyMarketItem(itemId, {
-        value: price,
-      });
-      await transaction.wait();
-      // Item purchased successfully, you can perform any additional actions here
-      console.log("Item purchased:", itemId);
-    } catch (error) {
-      console.error("Error purchasing item:", error);
-      // Handle error and provide feedback to the user
+      }
     }
+    setLoading(false);
+    setItems(collectionItems);
   };
 
+  const buyMarketItem = async (item) => {
+    await (
+      await marketplace.purchaseItem(item.itemId, { value: item.totalPrice })
+    ).wait();
+    loadCollectionItems(collectionName);
+  };
+
+  useEffect(() => {
+    loadCollectionItems(collectionName);
+  });
+
+  if (loading) {
+    return (
+      
+
+      <div
+        style={{
+          padding: "1rem 0",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Spinner animation="grow" style={{ display: "flex" }} />
+        <h2 className="mx-3 my-0">Loading...</h2>
+      </div>
+      
+    );
+  }
+
+  if (!items.length) {
+    return (
+      <main style={{ padding: "1rem 0" }}>
+        <h2>No Items in the Collection</h2>
+      </main>
+    );
+  }
+
   return (
-    <Container>
-      <h1 className="mt-4 mb-4">Collection: {collectionName}</h1>
-      {nfts.length === 0 ? (
-        <p>No NFTs available in this collection.</p>
-      ) : (
-        <Row>
-          {nfts.map((nft) => (
-            <Col key={nft.itemId} sm={6} md={4} lg={3} className="mb-4">
-              <Card>
-                <Card.Img variant="top" src={nft.metadata.image} />
+    <div className="flex justify-center">
+      
+      <div className="px-5 container">
+        <h1
+          style={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          Collection: {collectionName}
+        </h1>
+        <Row
+          xs={1}
+          sm={2}
+          md={2}
+          lg={5}
+          className="g-4 py-5"
+          style={{ padding: "20px" }}
+        >
+          {items.map((item, idx) => (
+            <Col key={idx}>
+              <Card class="nftCardss">
+                <Card.Img class="img-size" variant="top" src={item.image} />
                 <Card.Body>
-                  <Card.Title>Item ID: {nft.itemId}</Card.Title>
-                  <Card.Text>NFT Token ID: {nft.tokenId}</Card.Text>
-                  <Card.Text>Price: {nft.price}</Card.Text>
-                  <Card.Text>Seller: {nft.seller}</Card.Text>
-                  {nft.sold ? (
-                    <Card.Text>Status: Sold</Card.Text>
-                  ) : (
-                    <>
-                      <Card.Text>Status: Available</Card.Text>
-                      <Button
-                        variant="primary"
-                        onClick={() =>
-                          buyMarketItem(nft.itemId, nft.totalPrice)
-                        }
-                      >
-                        Buy Now
-                      </Button>
-                    </>
-                  )}
+                  <Card.Title>{item.name}</Card.Title>
+                  <Card.Text style={{ fontSize: "11px" }}>
+                    {item.description}
+                  </Card.Text>
+                  {/* <Card.Text style={{fontSize: "14px"}}>{item.description.slice(0, 15) + "..."}</Card.Text> */}
+                  <Button
+                    className="buy-nft"
+                    onClick={() => buyMarketItem(item)}
+                    variant="primary"
+                  >
+                    {ethers.utils.formatEther(item.totalPrice)} ETH
+                  </Button>
                 </Card.Body>
+                {/* <Card.Footer>
+                    
+                </Card.Footer> */}
               </Card>
             </Col>
           ))}
         </Row>
-      )}
-    </Container>
+      </div>
+      
+    </div>
   );
 };
 

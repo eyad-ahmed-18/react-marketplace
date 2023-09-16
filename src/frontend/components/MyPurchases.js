@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { Row, Col, Card } from "react-bootstrap";
+import { Row, Col, Card, Spinner } from "react-bootstrap";
 
 export default function MyPurchases({ marketplace, nft, account }) {
   const [loading, setLoading] = useState(true);
@@ -45,12 +45,24 @@ export default function MyPurchases({ marketplace, nft, account }) {
   };
   useEffect(() => {
     loadPurchasedItems();
-  }, []);
+  });
   if (loading)
     return (
-      <main style={{ padding: "1rem 0" }}>
-        <h2>Loading...</h2>
-      </main>
+      // <main style={{ padding: "1rem 0" }}>
+      //   <Spinner animation="grow" style={{ display: "flex" }} />
+
+      //   <h2>Loading...</h2>
+      // </main>
+      <div
+        style={{
+          padding: "1rem 0",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Spinner animation="grow" style={{ display: "flex" }} />
+        <h2 className="mx-3 my-0">Loading...</h2>
+      </div>
     );
   return (
     <div className="flex justify-center">
@@ -59,18 +71,18 @@ export default function MyPurchases({ marketplace, nft, account }) {
           <Row xs={1} md={2} lg={4} className="g-4 py-5">
             {purchases.map((item, idx) => (
               <Col key={idx}>
-                <Card>
-                  <Card.Img variant="top" src={item.image} />
-                  <Card.Footer>
+                <Card className="purchasecard">
+                  <Card.Img class="img-size" variant="top" src={item.image} />
+                  <Card.Body>
                     {ethers.utils.formatEther(item.totalPrice)} ETH
-                  </Card.Footer>
+                  </Card.Body>
                 </Card>
               </Col>
             ))}
           </Row>
         </div>
       ) : (
-        <main style={{ padding: "1rem 0" }}>
+        <main style={{ display: "flex", justifyContent: "center" }}>
           <h2>No purchases</h2>
         </main>
       )}

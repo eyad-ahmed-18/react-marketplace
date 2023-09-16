@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { Row, Col, Card } from "react-bootstrap";
+import { Row, Col, Card, Spinner } from "react-bootstrap";
 
 function renderSoldItems(items) {
   return (
@@ -9,12 +9,12 @@ function renderSoldItems(items) {
       <Row xs={1} md={2} lg={4} className="g-4 py-3">
         {items.map((item, idx) => (
           <Col key={idx}>
-            <Card>
-              <Card.Img variant="top" src={item.image} />
-              <Card.Footer>
+            <Card className="soldcard">
+              <Card.Img class="img-size" variant="top" src={item.image} />
+              <Card.Body>
                 For {ethers.utils.formatEther(item.totalPrice)} ETH - Recieved{" "}
                 {ethers.utils.formatEther(item.price)} ETH
-              </Card.Footer>
+              </Card.Body>
             </Card>
           </Col>
         ))}
@@ -62,12 +62,19 @@ export default function MyListedItems({ marketplace, nft, account }) {
   };
   useEffect(() => {
     loadListedItems();
-  }, []);
+  });
   if (loading)
     return (
-      <main style={{ padding: "1rem 0" }}>
-        <h2>Loading...</h2>
-      </main>
+      <div
+        style={{
+          padding: "1rem 0",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Spinner animation="grow" style={{ display: "flex" }} />
+        <h2 className="mx-3 my-0">Loading...</h2>
+      </div>
     );
   return (
     <div className="flex justify-center">
@@ -77,11 +84,11 @@ export default function MyListedItems({ marketplace, nft, account }) {
           <Row xs={1} md={2} lg={4} className="g-4 py-3">
             {listedItems.map((item, idx) => (
               <Col key={idx}>
-                <Card>
-                  <Card.Img variant="top" src={item.image} />
-                  <Card.Footer>
+                <Card className="purchasecard">
+                  <Card.Img class="img-size" variant="top" src={item.image} />
+                  <Card.Body>
                     {ethers.utils.formatEther(item.totalPrice)} ETH
-                  </Card.Footer>
+                  </Card.Body>
                 </Card>
               </Col>
             ))}
@@ -89,8 +96,10 @@ export default function MyListedItems({ marketplace, nft, account }) {
           {soldItems.length > 0 && renderSoldItems(soldItems)}
         </div>
       ) : (
-        <main style={{ padding: "1rem 0" }}>
-          <h2>No listed assets</h2>
+        <main>
+          <h2 style={{ display: "flex", justifyContent: "center" }}>
+            No listed assets
+          </h2>
         </main>
       )}
     </div>

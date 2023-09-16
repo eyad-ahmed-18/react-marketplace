@@ -13,7 +13,8 @@ contract Marketplace is ReentrancyGuard {
 
     struct Item {
         uint itemId;
-        string collectionName; // New collection name attribute
+        string collectionName;
+        string category; // New category attribute
         IERC721 nft;
         uint tokenId;
         uint price;
@@ -47,27 +48,25 @@ contract Marketplace is ReentrancyGuard {
 
     // Make item to offer on the marketplace
     function makeItem(
-        string memory _collectionName, // New parameter for collection name
+        string memory _collectionName,
+        string memory _category, // New parameter for category
         IERC721 _nft,
         uint _tokenId,
         uint _price
     ) external nonReentrant {
         require(_price > 0, "Price must be greater than zero");
-        // increment itemCount
         itemCount++;
-        // transfer nft
         _nft.transferFrom(msg.sender, address(this), _tokenId);
-        // add new item to items mapping
         items[itemCount] = Item(
             itemCount,
-            _collectionName, // Store the collection name
+            _collectionName,
+            _category, // Store the category
             _nft,
             _tokenId,
             _price,
             payable(msg.sender),
             false
         );
-        // emit Offered event
         emit Offered(
             itemCount,
             address(_nft),
@@ -76,6 +75,8 @@ contract Marketplace is ReentrancyGuard {
             msg.sender
         );
     }
+
+    
 
     function purchaseItem(uint _itemId) external payable nonReentrant {
         uint _totalPrice = getTotalPrice(_itemId);

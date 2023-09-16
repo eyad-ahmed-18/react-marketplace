@@ -3,6 +3,8 @@ import { ethers } from "ethers";
 import { Buffer } from "buffer";
 import { Row, Form, Button } from "react-bootstrap";
 import { create as ipfsHttpClient } from "ipfs-http-client";
+import { useNavigate } from "react-router-dom";
+
 const projectId = "2Nuz7taK42diXm9I0DNWAEAj8t4";
 const projectSecret = "3ed0d85503fea0223fd40c7da0ff9644";
 const auth =
@@ -17,12 +19,15 @@ const client = ipfsHttpClient({
     authorization: auth,
   },
 });
+
 const Create = ({ marketplace, nft }) => {
+  const navigate = useNavigate();
   const [image, setImage] = useState("");
   const [price, setPrice] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [collectionName, setCollectionName] = useState("");
+  const [category, setCategory] = useState("");
 
   const uploadToIPFS = async (event) => {
     event.preventDefault();
@@ -37,17 +42,35 @@ const Create = ({ marketplace, nft }) => {
       }
     }
   };
+
   const createNFT = async () => {
-    if (!image || !price || !name || !description || !collectionName) return;
+    if (
+      !image ||
+      !price ||
+      !name ||
+      !category ||
+      !description ||
+      !collectionName
+    )
+      return;
     try {
       const result = await client.add(
-        JSON.stringify({ image, price, name, description, collectionName })
+        JSON.stringify({
+          image,
+          price,
+          name,
+          category,
+          description,
+          collectionName,
+        })
       );
-      mintThenList(result);
+      await mintThenList(result);
+      navigate("/home"); // Route back to the home page after creating and listing the NFT
     } catch (error) {
       console.log("ipfs uri upload error: ", error);
     }
   };
+
   const mintThenList = async (result) => {
     const uri = `https://theblock.infura-ipfs.io/ipfs/${result.path}`;
     // mint nft
@@ -59,9 +82,16 @@ const Create = ({ marketplace, nft }) => {
     // add nft to marketplace
     const listingPrice = ethers.utils.parseEther(price.toString());
     await (
-      await marketplace.makeItem(collectionName, nft.address, id, listingPrice)
+      await marketplace.makeItem(
+        collectionName,
+        category,
+        nft.address,
+        id,
+        listingPrice
+      )
     ).wait();
   };
+
   return (
     <div className="container-fluid mt-5">
       <div className="row-form">
@@ -85,7 +115,7 @@ const Create = ({ marketplace, nft }) => {
                 size="lg"
                 required
                 type="text"
-                placeholder="Name"
+                placeholder="NFT Name"
               />
               <Form.Control
                 className="form"
@@ -95,6 +125,19 @@ const Create = ({ marketplace, nft }) => {
                 type="text"
                 placeholder="Collection Name"
               />
+              <Form.Select
+                className="form"
+                onChange={(e) => setCategory(e.target.value)}
+                size="lg"
+                required
+              >
+                <option value="">Select Category</option>
+                <option value="noCategory">Uncategorized</option>
+                <option value="Skill Sharing">Skill Sharing</option>
+                <option value="Collectibles">Collectibles</option>
+                <option value="Coworking Spaces">Coworking Spaces</option>
+                <option value="Entertainment">Entertainment</option>
+              </Form.Select>
               <Form.Control
                 className="form"
                 onChange={(e) => setDescription(e.target.value)}
@@ -113,10 +156,13 @@ const Create = ({ marketplace, nft }) => {
               />
               <div className="d-grid px-0">
                 <Button
-                  className="create-nft"
+                  className="buy-nft"
                   onClick={createNFT}
                   variant="primary"
                   size="lg"
+                  style={{
+                    fontSize: "20px",
+                  }}
                 >
                   Create & List NFT!
                 </Button>
